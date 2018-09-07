@@ -1,5 +1,6 @@
 import * as   React from 'react';
-import * as styles from './styles.css';
+// import * as styles from './styles.scss';.
+var styles = { scopedClassName: 'scopedClassName' }
 import Link from './Link';
 import mobx from './mobx.png';
 

@@ -21,10 +21,12 @@ const port = process.env.PORT || 3000;
 
 const env = {
   dev: process.env.NODE_ENV === 'development',
-  port
+  port,
 };
 
-const devServerConfig = {};
+const devServerConfig = {
+  hot: true
+};
 
 try {
   const app = express();
@@ -39,10 +41,8 @@ try {
       console.error(err);
     }
     console.log(`Server listening to port ${port}`);
-    opn(`http://localhost:${port}`);
+    // opn(`http://localhost:${port}`);
   });
 } catch (e) {
   console.error(e);
 }
-
-

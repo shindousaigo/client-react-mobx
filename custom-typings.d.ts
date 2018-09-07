@@ -44,7 +44,19 @@ import * as _ from 'lodash'
  */
 
 // support NodeJS modules without type definitions
-declare module '*';
+// declare module '*';
+
+declare module '*.scss' {
+  const styles: any;
+  export = styles;
+}
+
+declare module '*.png' {
+  const png: string;
+  export = png;
+}
+
+
 
 /*
 // for legacy tslint etc to understand rename 'modern-lru' with your package
@@ -57,6 +69,7 @@ declare module 'modern-lru' {
 */
 
 // Extra variables that live on Global that will be replaced by webpack DefinePlugin
+declare var md5: (str: string) => string;
 declare var ENV: string;
 declare var HMR: boolean;
 declare var System: SystemJS;
