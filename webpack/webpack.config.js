@@ -50,6 +50,14 @@ module.exports = (env) => {
             'awesome-typescript-loader?target=es5' : 'awesome-typescript-loader'
         },
         {
+          test: /\.(css)$/,
+          use: [
+            env.dev || env.test ? 'style-loader' : 'style-loader' || MiniCssExtractPlugin.loader,
+            'css-loader', //?modules=false&minimize&-autoprefixer',
+            'postcss-loader'
+          ]
+        },
+        {
           test: /\.(scss)$/,
           use: [
             env.dev || env.test ? 'style-loader' : 'style-loader' || MiniCssExtractPlugin.loader,
@@ -80,7 +88,7 @@ module.exports = (env) => {
         //   use: 'url-loader?limit=8192'
         // },
         {
-          test: /\.(gif|jpg|png|woff|svg|eot|ttf)\??.*$/,
+          test: /\.(gif|jpg|png|woff|eot|ttf)\??.*$/,
           use: [{
             loader: 'file-loader',
             // options: {
@@ -88,6 +96,15 @@ module.exports = (env) => {
             //   outputPath: './img'
             // }
           }]
+        },
+        {
+          test: /\.svg$/,
+          include: /node_modules/,
+          use: ['file-loader'],
+        }, {
+          test: /\.svg$/,
+          exclude: /node_modules/,
+          use: ['@svgr/webpack', 'file-loader'],
         }
       ],
     },

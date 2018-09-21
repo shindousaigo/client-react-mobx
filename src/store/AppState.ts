@@ -1,46 +1,64 @@
-import { observable, action } from 'mobx';
+import { observable, action, intercept, IValueWillChange } from 'mobx';
+import Store from 'src/store';
 
-const hasWindow = typeof window !== 'undefined';
 
-export interface AppStateProps {
-  timer: number;
-}
 
-/*
-* This is the entry point for the app's state. All stores should go here.
-*/
-class AppState implements AppStateProps {
-  @observable timer = 0;
-  @observable message = '';
-
-  intervalId: any;
+export default class AppState {
 
   constructor() {
-    if (hasWindow) {
-      this.intervalId = setInterval(this.incrementTimer, 1000);
-    }
+    this.intercept_availableSystem()
   }
 
-  @action incrementTimer = () => {
-    this.timer += 1;
+  intercept_availableSystem() {
+    intercept(this, 'availableSystem', (change: IValueWillChange<Map<any, any>>) => {
+      let availableSystemTree = []
+      let availableSystemSelect = []
+      change.newValue.forEach((val, key) => {
+        availableSystemTree.push({
+          source: val,
+          label: key,
+          value: false,
+          expand: false,
+          hasData: false,
+          children: [{
+            label: 'Loader'
+          }]
+        })
+        availableSystemSelect.push({
+          label: key,
+          value: key
+        })
+        if (Store.instance.localstorageState.settingConfig.autoSystem && !Store.instance.localstorageState.settingConfig.defaultSystem) {
+          Store.instance.localstorageState.updateSettingConfig({
+            defaultSystem: key
+          })
+        }
+      })
+      this.updateAvailableSystemTree(availableSystemTree)
+      this.updateAvailableSystemSelect(availableSystemSelect)
+      return change
+    })
   }
 
-  @action setMessage(message: string) {
-    this.message = message;
+  @observable isReload = false
+
+  @observable isLogin = false
+  @action updateIsLogin(status) {
+    this.isLogin = status
   }
 
-  @action resetTimer() {
-    this.timer = 0;
+  @observable drawerShow = false
+  @action updateDrawerShow(status) {
+    this.drawerShow = status
   }
 
-  reload(store: AppStateProps) {
-    Object.assign(this, store);
-    return this;
+  @observable availableSystem: Map<any, any>
+  @observable availableSystemTree: any[]
+  @action updateAvailableSystemTree(data) {
+    this.availableSystemTree = data
   }
-
-  unload() {
-    clearInterval(this.intervalId);
+  @observable availableSystemSelect: any[]
+  @action updateAvailableSystemSelect(data) {
+    this.availableSystemSelect = data
   }
 }
-
-export default AppState;

@@ -1,0 +1,25 @@
+@import "stylesheet/style.setting.scss";
+
+.container {
+  @import "stylesheet/style.header.scss";
+  @import "stylesheet/style.sidenav.scss";
+  @import "stylesheet/style.dashboard.scss";
+
+  & &__body {
+    overflow: hidden;
+    height: calc(100vh - 3.2rem);
+    padding: .2rem 0 .3rem 0;
+
+    @media screen and (max-width: 480px) {
+      height: calc(100vh - 3rem);
+    }
+  }
+
+  & &__sidebar {
+    height: 100%;
+  }
+
+  & &__content {
+    height: 100%;
+  }
+}

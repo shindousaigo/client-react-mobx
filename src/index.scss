@@ -1,7 +1,26 @@
+body {
+  overflow: hidden;
+  min-width: 375px;
+}
+
 .rs-notification-content {
-  transform: translateY(9px) !important;
+  transform: translateY(10px) !important;
 }
 
 .rs-notification-notify .rs-notification-notice-close {
   font-size: 14px !important;
+}
+
+
+::-webkit-scrollbar {
+  width: .7rem;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
 }

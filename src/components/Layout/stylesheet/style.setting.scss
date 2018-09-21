@@ -1,0 +1,71 @@
+$navList: (name: 'normal'),
+(name: 'systems');
+
+.setting {
+  height: 2rem;
+
+  @media screen and (max-width: 600px) {
+    .rs-drawer-dialog {
+      // min-width: 375px;
+      width: 100% !important;
+    }
+  }
+
+  & &__title {
+    font-weight: 600;
+    font-size: 1.4rem;
+    color: #4990ee;
+  }
+
+  &__icon--title {
+    position: absolute;
+    left: 0;
+    width: 2rem;
+    height: 2rem;
+  }
+
+  &__body-container--animation {
+    margin: .6rem 0 0 0;
+    padding: 0 0 0 .3rem;
+  }
+
+  @for $i from 1 through length($navList) {
+    $item: nth($navList, $i);
+    $name: map-get($item, name);
+
+    .#{'body-'+$name} {
+
+      @if($name=='normal') {
+        &__item {
+          margin: .2rem 0 0 0;
+          height: 2.2rem;
+          font-size: .94rem;
+        }
+
+        &-item__toggle {
+          margin: 0 .6rem;
+        }
+
+        &-item__system-select-picker {
+          width: 8.4rem;
+          margin-left: .6rem;
+        }
+      }
+
+      @if($name=='systems') {
+        &__tree {
+          max-height: none;
+        }
+
+        &-tree-item__button {
+          color: inherit;
+          margin-left: .6rem;
+          background: transparent;
+        }
+      }
+    }
+
+
+  }
+
+}

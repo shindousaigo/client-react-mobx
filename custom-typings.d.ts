@@ -56,7 +56,11 @@ declare module '*.png' {
   export = png;
 }
 
-
+declare module '*.svg' {
+  const svg: string
+  export const ReactComponent: React.ComponentClass<React.SVGAttributes<any>>;
+  export default svg
+}
 
 /*
 // for legacy tslint etc to understand rename 'modern-lru' with your package

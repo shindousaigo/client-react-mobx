@@ -1,65 +1,31 @@
 import * as React from 'react';
-import { initialize } from 'src/components/Login/page.animation';
-import { View } from 'src/store/ViewState';
+import { initialize } from 'src/components/Login/animation.login';
+import Device from 'src/store/Device';
 import Store from 'src/store';
-import 'src/components/Login/style.base.scss'
+import 'src/components/Login/style.login.scss'
 import { intercept } from 'mobx'
 import { observer } from 'mobx-react'
-import { Http } from 'src/store/HttpState';
 import { Button } from 'rsuite'
-
-export interface LoginProps {
-  store: Store
-}
+import { History } from 'history'
+import { Routes } from 'src/store/RouteState';
 
 @observer
-export default class LoginPage extends React.Component<LoginProps> {
+export default class Login extends React.Component<{ history: History }> {
 
   constructor(props) {
     super(props)
-    this.init()
+    Store.instance.localstorageState.userInfo && Store.instance.localstorageState.settingConfig.autoLogin && this.login(null, false)
   }
 
   state = {
-    visibility: 'hidden',
-    text: {
+    txt: {
       username: '用户名',
       password: '密码',
       login: '登录'
     }
   }
 
-  init() {
-    this.initStyles()
-  }
-
-  Styles: { [View.ViewMode.ELSE]: () => Promise<any>, [View.ViewMode.XS]: () => Promise<any> } & Object = {
-    [View.ViewMode.ELSE]: function () {
-      return import('./style.full.scss')
-    },
-    [View.ViewMode.XS]: function () {
-      return import('./style.portable.scss')
-    }
-  }
-
   Doms: { username: HTMLInputElement, password: HTMLInputElement } & Object
-
-  async initStyles() {
-    let disposer = intercept(this.props.store.viewState, 'viewMode', change => {
-      let viewMode = change.newValue
-      this.Styles[viewMode]()
-      disposer()
-      return change
-    })
-    let viewMode = this.props.store.viewState.viewMode
-    await this.Styles[viewMode]()
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        this.state.visibility = 'visible'
-        this.setState(this.state)
-      })
-    });
-  }
 
   initDoms() {
     this.Doms = {
@@ -73,24 +39,29 @@ export default class LoginPage extends React.Component<LoginProps> {
     this.initDoms()
   }
 
-  login = async () => {
-    let { username, password } = this.Doms
-    let res = await this.props.store.httpState.userLogin({
-      userName: username.value,
-      password: password.value
-    })
-    if (res && res.code === Http.ResponseState.SUCCESS) {
-      console.log(res)
+  login = async (loginData, showNotification: boolean = true) => {
+    let res = await Store.instance.httpState.userLogin(loginData, { showNotification })
+    if (res) {
+      let available = await Store.instance.httpState.checkSystem()
+      if (available) {
+        setTimeout(() => {
+          Store.instance.appState.updateIsLogin(true)
+          this.props.history.push(Routes.Path.LAYOUT)
+        }, 750)
+      }
     }
-
   }
 
   render() {
-    return <div className="login-main" style={{ visibility: this.state.visibility as any }}>
-      <form className="login-form" onSubmit={(event) => {
-        event.preventDefault()
-        this.login()
-      }}>
+    return <div className="container login">
+      <form
+        className="form"
+        onSubmit={event => {
+          event.preventDefault()
+          let { username, password } = this.Doms
+          this.login({ userName: username.value, password: password.value })
+        }}
+      >
         <div className="svgContainer">
           <div>
             <svg className="mySVG" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 200">
@@ -210,25 +181,23 @@ export default class LoginPage extends React.Component<LoginProps> {
             </svg>
           </div>
         </div>
-
         <div className="inputGroup inputGroup1">
           <label htmlFor="email1">Username</label>
           <input type="text" id="email" name="email" className="email" maxLength={256} required />
-          <p className="helper helper1">{this.state.text.username}</p>
+          <p className="helper helper1">{this.state.txt.username}</p>
           <span className="indicator"></span>
         </div>
         <div className="inputGroup inputGroup1">
           <label htmlFor="password">Password</label>
           <input type="password" id="password" name="password" className="password" required />
-          <p className="helper helper1">{this.state.text.password}</p>
+          <p className="helper helper1">{this.state.txt.password}</p>
           <span className="indicator"></span>
         </div>
         <div className="inputGroup inputGroup3">
-          {this.props.store.httpState.isLogining ? <Button appearance="primary" loading></Button> : <Button appearance="primary" id="login">
-            <input className="submit" type="submit" value={this.state.text.login} />
+          {Store.instance.httpState.isLogining ? <Button appearance="primary" loading></Button> : <Button appearance="primary" id="login">
+            <input className="submit" type="submit" value={this.state.txt.login} />
           </Button>}
         </div>
-
       </form>
     </div>
   }

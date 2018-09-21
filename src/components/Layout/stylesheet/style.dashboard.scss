@@ -1,0 +1,45 @@
+.dashboard {
+  height: 100%;
+
+  &__backdrop {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, .6);
+  }
+
+  &__system-select {
+    margin: .7rem 1.2rem 0 1.2rem;
+
+    .rs-panel-body {
+      padding-bottom: 15px;
+    }
+  }
+
+  &__systems-list {
+    position: relative;
+  }
+
+  &__systems-item {
+    flex-flow: column;
+    align-items: center;
+    margin: 0 .625rem;
+    font-size: .96rem;
+    font-weight: 600;
+    border-radius: .3rem;
+    width: 9.5rem;
+    height: 9.6rem;
+    // padding: 0 0 .5rem 0;
+    // transition: transform 1s ease-in-out;
+
+    &:hover {
+      background: #0ac5e7;
+      color: #fff;
+    }
+  }
+
+  &__system-item--icon {
+    width: 8rem;
+    height: 8rem;
+  }
+}
